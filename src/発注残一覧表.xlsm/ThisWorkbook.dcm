@@ -1,0 +1,75 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "ThisWorkbook"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Option Explicit
+
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    Application.ReferenceStyle = xlA1
+End Sub
+
+'èâä˙âª
+Private Sub Workbook_Open()
+
+Dim DateA As Date
+Dim strYY As String
+Dim strMM As String
+Dim strCP As String
+
+    'º∞ƒ∏ÿ±
+    Application.ScreenUpdating = False
+    
+    Worksheets("èWåv").Select
+    strYY = Format(Now(), "yyyy")
+    strMM = Format(Now(), "mm")
+    strMM = Format(CLng(strMM) + 1, "00")
+    If strMM = "13" Then
+        strYY = CStr(CLng(strYY) + 1)
+        strMM = "01"
+    End If
+    Range("V3") = strYY & strMM & "01" 'ìñåéÇ‹Ç≈
+    Range("V4") = strMM
+    strMM = Format(CLng(strMM) + 1, "00")
+    If strMM = "13" Then
+        strYY = CStr(CLng(strYY) + 1)
+        strMM = "01"
+    End If
+    DateA = CDate(strYY & "/" & strMM & "/" & "01")
+    DateA = DateA - 1
+    Range("V5") = Format(DateA, "yyyymmdd")
+    
+    Worksheets("édì¸êÊ").Select
+    Call Clear_Head
+    Call Clear_Sht
+    
+    Worksheets("íSìñé“").Select
+    Call Clear_Head2
+    Call Clear_Sht2
+    Call BUMON_Get
+    
+    'éxìXëIëèàóù
+    strCP = CP_NAME
+    If Left(strCP, 2) = "OS" Or Left(strCP, 2) = "FU" Or Left(strCP, 2) = "NG" Then
+        Worksheets("íSìñé“").Range("R1") = 1
+    ElseIf Left(strCP, 2) = "TK" Or Left(strCP, 1) = "S" Or Left(strCP, 2) = "AK" Then
+        Worksheets("íSìñé“").Range("R1") = 2
+    ElseIf Left(strCP, 2) = "HB" Then
+        Worksheets("íSìñé“").Range("R1") = 1
+    Else
+        Worksheets("íSìñé“").Range("R1") = ""
+    End If
+    
+    If Sheets("èWåv").Range("R1") = 1 Then
+        Worksheets("èWåv").Select
+        Call Get_SumD
+    End If
+    
+    Application.ScreenUpdating = True
+    LB_Set
+    
+End Sub
