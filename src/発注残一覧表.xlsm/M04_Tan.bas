@@ -22,8 +22,8 @@ Sub Get_DATAT(strM As String, strKBN As String)
 Dim whole_time As Toriikinzoku.TimerObject
 Set whole_time = Toriikinzoku.CreateTimer
 
-Dim db      As Toriikinzoku.DataBaseAccess
-Dim rsA As New ADODB.Recordset
+Dim db     As Toriikinzoku.DataBaseAccess
+Dim rsA    As New ADODB.Recordset
 Dim strSQL As String
 Dim strCD  As String
 Dim strKB  As String
@@ -185,23 +185,37 @@ End Sub
 
 Sub Proc_BUMON()
     
-    Dim cnB    As New ADODB.Connection
+    Dim db     As Toriikinzoku.DataBaseAccess
     Dim rsB    As New ADODB.Recordset
+    Dim strNT  As String
     Dim strSQL As String
+    Dim strKTN As String
     Dim strSTN As String
     Dim lngRC  As Long
     Dim boolC  As Boolean
     
-    Const SQL1 = "SELECT ïîñÂ∫∞ƒﬁ, First(ïîñÂñº) FROM ïîñÂãÊï™ WHERE (((éxìX) = '"
-    Const SQL2 = "') And ((ãÊï™) = 'S')) GROUP BY ïîñÂ∫∞ƒﬁ ORDER BY ïîñÂ∫∞ƒﬁ"
+    Set db = Toriikinzoku.Instance.CreateDB
+    db.Connect ("process_os")
     
-    'strDB = DR1 & dbA
-    'cnB.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" & strDB
-    cnB.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" & dbA
-    cnB.Open
     strSTN = Sheets("íSìñé“").Cells(2, 18)
-    strSQL = SQL1 & strSTN & SQL2
-    rsB.Open strSQL, cnB, adOpenStatic, adLockReadOnly
+    Select Case strSTN
+        Case "ëÂç„éxìX"
+            strSTN = " IN ('02','03','04')"
+        Case "ìåãûéxìX"
+            strSTN = " IN ('06','08','09','10')"
+        Case "ñ{ïî"
+            strSTN = " = '07'"
+    End Select
+    
+    strSQL = ""
+    strSQL = strSQL & "SELECT bmncd,"
+    strSQL = strSQL & "       bmnnm"
+    strSQL = strSQL & "              FROM ïîñÂ"
+    strSQL = strSQL & "                   WHERE kyo_code" & strSTN
+    strSQL = strSQL & "                   And kbn_code = '03'"
+    strSQL = strSQL & "              ORDER BY bmncd"
+    Set rsB = db.Execute(strSQL)
+    
     If rsB.EOF Then
         MsgBox "ÉfÅ[É^ÉxÅ[ÉXÇ…ÉAÉNÉZÉXèoóàÇ‹ÇπÇÒÅB", vbCritical
         GoTo Exit_DB
@@ -217,7 +231,7 @@ Sub Proc_BUMON()
             lngRC = 3
             Do Until .EOF
                 Sheets("íSìñé“").Cells(lngRC, 20) = .Fields(0)
-                Sheets("íSìñé“").Cells(lngRC, 19) = .Fields(1)
+                Sheets("íSìñé“").Cells(lngRC, 19) = Trim(.Fields(1))
                 lngRC = lngRC + 1
                 If lngRC = 23 Then Exit Do
                 .MoveNext
@@ -228,9 +242,11 @@ Sub Proc_BUMON()
     Range("S1") = ""
     
 Exit_DB:
-    rsB.Close
-    cnB.Close
-    Set rsB = Nothing
-    Set cnB = Nothing
+
+    db.Disconnect
+    If Not rsB Is Nothing Then
+        If rsB.State = adStateOpen Then rsB.Close
+        Set rsB = Nothing
+    End If
 
 End Sub

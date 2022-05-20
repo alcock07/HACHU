@@ -1,41 +1,12 @@
 Attribute VB_Name = "M01_Main"
 Option Explicit
 
-'コンピューター名を取得する関数の宣言
-'#If VBA7 Then
-'    Declare PtrSafe Function GetComputerName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
-'    Public Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-'#Else
-'    Declare Function GetComputerName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
-'    Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-'#End If
-    
-'Public Const MAX_COMPUTERNAME_LENGTH = 15
-Public Const dbA = "\\192.168.128.4\hb\SYS\DATA\発注残.accdb"
-
 Public n_TOK        As String
 Public n_NOK        As String
 Public n_HDN        As String
 Public n_DEN        As String
 Public strTOK(1, 9) As String
 Public strDB        As String
-
-'Public Function CP_NAME() As String
-'
-'    Const COMPUTERNAMBUFFER_LENGTH = MAX_COMPUTERNAME_LENGTH + 1
-'    Dim strComputerNameBuffer As String * COMPUTERNAMBUFFER_LENGTH
-'    Dim lngComputerNameLength As Long
-'    Dim lngWin32apiResultCode As Long
-'
-'    ' コンピューター名の長さを設定
-'    lngComputerNameLength = Len(strComputerNameBuffer)
-'    ' コンピューター名を取得
-'    lngWin32apiResultCode = GetComputerName(strComputerNameBuffer, _
-'                                            lngComputerNameLength)
-'    ' コンピューター名を表示
-'    CP_NAME = Left(strComputerNameBuffer, InStr(strComputerNameBuffer, vbNullChar) - 1)
-'
-'End Function
 
 Sub 仕入先()
     If Sheets("集計").Range("U1") = 4 Then
